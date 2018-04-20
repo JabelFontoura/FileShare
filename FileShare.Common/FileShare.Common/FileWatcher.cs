@@ -35,9 +35,21 @@ namespace FileShare.Server
 
         private void OnChanged(object source, FileSystemEventArgs e)
         {
-            var fileChanges = File.ReadAllBytes(e.FullPath);
+            var tryAgain = true;
+            while(tryAgain)
+            {
+                try
+                {
+                    var fileChanges = File.ReadAllBytes(e.FullPath);
+                    SocketHelper.Send(new ModifyFileAction(e.Name, fileChanges));
+                    tryAgain = false;
+                }
+                catch (IOException ioe)
+                {
+                    Console.WriteLine(ioe.Message);
+                }
+            }
 
-            SocketHelper.Send(new ModifyFileAction(e.Name, fileChanges));
         }
 
         private void OnCreate(object source, FileSystemEventArgs e)

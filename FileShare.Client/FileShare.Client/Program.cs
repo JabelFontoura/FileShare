@@ -14,11 +14,7 @@ namespace FileShare.Client
         {
             var client = new Client();
             var connected = true;
-            new Thread(() =>
-            {
-                new DirectoryWatcher(client).Watch("C:\\fileshare\\node1", ref connected);
-
-            }).Start();
+            new DirectoryWatcher(client).Watch("C:\\fileshare\\node1", ref connected);
         }
     }
 }

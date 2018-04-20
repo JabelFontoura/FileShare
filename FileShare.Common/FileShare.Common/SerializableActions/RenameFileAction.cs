@@ -12,7 +12,7 @@ namespace FileShare.Common.SerializableActions
 
         public override void Run()
         {
-            if (File.Exists(OldFileName))
+            if (File.Exists(OldFileName) && FileName != OldFileName)
                 File.Move(OldFileName, FileName);
         }
     }

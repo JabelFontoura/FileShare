@@ -18,7 +18,7 @@ namespace FileShare.Common
         {
             FileName = fileName;
             OldFileName = oldFileName;
-            FileChanges = FileChanges;
+            FileChanges = fileChanges;
         }
     }
 }
