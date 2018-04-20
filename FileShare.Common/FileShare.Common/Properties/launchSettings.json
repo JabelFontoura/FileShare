@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "FileShare.Common": {
+      "commandName": "Executable"
+    }
+  }
+}

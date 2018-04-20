@@ -6,26 +6,23 @@ using System.Text;
 namespace FileShare.Common.SerializableActions
 {
     [Serializable]
-    public class ModifyFileAction : IFileAction
+    public class ModifyFileAction : FileAction
     {
-        public string FileName { get; set; }
+        public ModifyFileAction(string fileName, byte[] fileChanges) : base(fileName, null, fileChanges) { }
 
-        public ModifyFileAction(string fileName)
+        public override void Run()
         {
-            FileName = fileName;
-        }
-
-        public void Run()
-        {
-            var fileChanges = File.ReadAllBytes(FileName);
-
-            try
+            if (FileChanges != null)
             {
-                File.WriteAllBytes(FileName, fileChanges);
-            }
-            catch (IOException err)
-            {
-                Console.WriteLine(err.ToString());
+                try
+                {
+                    File.WriteAllBytes(FileName, FileChanges);
+                }
+                catch (IOException err)
+                {
+                    Console.WriteLine(err.ToString());
+                }
+
             }
         }
     }

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using System.Text;
 
 namespace FileShare.Common
 {
-    public interface IFileAction
+    public interface ISocketHelper
     {
-        void Run();
+        void Send(FileAction action);
     }
 }

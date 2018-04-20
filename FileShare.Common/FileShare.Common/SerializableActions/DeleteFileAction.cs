@@ -7,16 +7,11 @@ using System.Text;
 namespace FileShare.Common
 {
     [Serializable]
-    public class DeleteFileAction : IFileAction
+    public class DeleteFileAction : FileAction
     {
-        public string FileName { get; set; }
+        public DeleteFileAction(string fileName) : base(fileName, null, null) { }
 
-        public DeleteFileAction(string fileName)
-        {
-            FileName = fileName;
-        }
-
-        public void Run()
+        public override void Run()
         {
             if (File.Exists(FileName))
                 File.Delete(FileName);

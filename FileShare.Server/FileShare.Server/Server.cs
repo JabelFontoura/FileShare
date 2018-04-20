@@ -1,4 +1,5 @@
 ﻿using FileShare.Common;
+using FileShare.Common.SerializableActions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,11 +31,16 @@ namespace FileShare.Server
                 {
                     var handler = listener.Accept();
 
-                    bytes = ProcessConnection(handler);
+                    bytes = new byte[1024];
+                    handler.Receive(bytes);
 
-                    var action = new DeleteFileAction("C:\\fileshare\\node2\\teste.txt");
-                    
-                    handler.Send(FileHelper.Serialize(action));
+                    var action = (FileAction)FileHelper.Deserialize(bytes);
+                    action.FileName = "C:\\fileshare\\node2\\" + action.FileName;
+                    action.OldFileName = "C:\\fileshare\\node2\\" + action.OldFileName;
+
+                    action.Run();
+                    handler.Send(new byte[2] { 0, 1 } );
+                    //handler.Send(FileHelper.Serialize(action));
                     handler.Shutdown(SocketShutdown.Both);
                     handler.Close();
                 }
@@ -44,23 +50,5 @@ namespace FileShare.Server
                 Console.WriteLine(e.ToString());
             }
         }
-
-        public byte[] ProcessConnection(Socket handler)
-        {
-            var bytes = new Byte[1024];
-            data = null;
-
-            while (true)
-            {
-                bytes = new byte[1024];
-                int bytesRec = handler.Receive(bytes);
-                data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
-                if (data.IndexOf("<EOF>") > -1)
-                    break;
-            }
-
-            return bytes;
-        }
-
     }
 }

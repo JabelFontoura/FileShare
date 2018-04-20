@@ -6,7 +6,7 @@ namespace FileShare.Common
 {
     public class FileHelper
     {
-        public static byte[] Serialize(IFileAction action)
+        public static byte[] Serialize(FileAction action)
         {
             if (action == null)
                 return null;

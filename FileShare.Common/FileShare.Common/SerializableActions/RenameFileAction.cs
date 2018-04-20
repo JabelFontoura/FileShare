@@ -6,17 +6,11 @@ using System.Text;
 namespace FileShare.Common.SerializableActions
 {
     [Serializable]
-    public class RenameFileAction : IFileAction
+    public class RenameFileAction : FileAction
     {
-        public string FileName { get; set; }
-        public string OldFileName { get; set; }
+        public RenameFileAction(string fileName, string oldFileName) : base(fileName, oldFileName, null) { }
 
-        public RenameFileAction(string fileName)
-        {
-            FileName = fileName;
-        }
-
-        public void Run()
+        public override void Run()
         {
             if (File.Exists(OldFileName))
                 File.Move(OldFileName, FileName);

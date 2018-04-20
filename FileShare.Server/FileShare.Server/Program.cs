@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Net.Sockets;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
+﻿using FileShare.Common;
 using System.Threading;
 
 namespace FileShare.Server
@@ -18,7 +12,7 @@ namespace FileShare.Server
 
             //new Thread(() =>
             //{
-            //    new DirectoryWatcher().Watch("C:\\fileshare\\node1", ref connected);
+            //    new DirectoryWatcher(new Teste()).Watch("C:\\fileshare\\node1", ref connected);
 
             //}).Start();
 
@@ -28,5 +22,12 @@ namespace FileShare.Server
         }
 
     }
-}
+    internal class Teste : ISocketHelper
+    {
+        public void Send(FileAction action)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 
+}

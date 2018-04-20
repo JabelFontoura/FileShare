@@ -6,19 +6,17 @@ using System.Text;
 namespace FileShare.Common.SerializableActions
 {
     [Serializable]
-    public class CreateFileAction : IFileAction
+    public class CreateFileAction : FileAction
     {
-        public string FileName { get; set; }
+        public CreateFileAction(string fileName) : base(fileName, null, null) { }
 
-        public CreateFileAction(string fileName)
-        {
-            FileName = fileName;
-        }
-
-        public void Run()
+        public override void Run()
         {
             if (!File.Exists(FileName))
-                File.Create(FileName);
+            {
+                var newFile = File.Create(FileName);
+                newFile.Close();
+            }
         }
     }
 }

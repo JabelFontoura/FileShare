@@ -1,4 +1,5 @@
 ﻿using FileShare.Common;
+using FileShare.Common.SerializableActions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +10,13 @@ namespace FileShare.Server
 {
     public class DirectoryWatcher
     {
-        private string FilePath = "C:\\fileshare\\node2\\";
+        private string FilePath { get; set; }
+        public ISocketHelper SocketHelper { get; set; }
+
+        public DirectoryWatcher(ISocketHelper socketHelper)
+        {
+            SocketHelper = socketHelper;
+        }
 
         public void Watch(string path, ref bool connected)
         {
@@ -30,32 +37,22 @@ namespace FileShare.Server
         {
             var fileChanges = File.ReadAllBytes(e.FullPath);
 
-            try
-            {
-                File.WriteAllBytes(FilePath + e.Name, fileChanges);
-            }
-            catch (IOException err)
-            {
-                Console.WriteLine(err.ToString());
-            }
+            SocketHelper.Send(new ModifyFileAction(e.Name, fileChanges));
         }
 
         private void OnCreate(object source, FileSystemEventArgs e)
         {
-            if (!File.Exists(FilePath + e.Name))
-                File.Create(FilePath + e.Name);
+            SocketHelper.Send(new CreateFileAction(e.Name));
         }
 
         private void OnDelete(object source, FileSystemEventArgs e)
         {
-            IFileAction action = new DeleteFileAction(FilePath + e.Name);
-            action.Run();
+            SocketHelper.Send(new DeleteFileAction(e.Name));
         }
 
         private void OnRenamed(object source, RenamedEventArgs e)
         {
-            if (File.Exists(FilePath + e.OldName))
-                File.Move(FilePath + e.OldName, FilePath + e.Name);
+            SocketHelper.Send(new RenameFileAction(e.Name, e.OldName));
         }
     }
 }
