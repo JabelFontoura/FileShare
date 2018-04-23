@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace FileShare.Common.SerializableActions
@@ -12,7 +13,8 @@ namespace FileShare.Common.SerializableActions
 
         public override void Run()
         {
-            if (FileChanges != null)
+            var teste = ContentHasChanged();
+            if (FileChanges.Length > 0 && ContentHasChanged())
             {
                 try
                 {
@@ -23,6 +25,20 @@ namespace FileShare.Common.SerializableActions
                     Console.WriteLine(err.ToString());
                 }
 
+            }
+        }
+
+        private bool ContentHasChanged()
+        {
+            try
+            {
+                var data = File.ReadAllBytes(FileName);
+
+                return !data.SequenceEqual(FileChanges);
+            }
+            catch (IOException e)
+            {
+                return false;
             }
         }
     }

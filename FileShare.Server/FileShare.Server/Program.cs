@@ -7,7 +7,7 @@ namespace FileShare.Server
     {
         static void Main(string[] args)
         {
-            new Server().StartListening();
+            new Server("C:\\fileshare\\server\\").StartListening();
             var connected = true;
 
             //new Thread(() =>
