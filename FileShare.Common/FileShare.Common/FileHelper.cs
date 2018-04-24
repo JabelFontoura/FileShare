@@ -22,14 +22,16 @@ namespace FileShare.Common
 
         public static object Deserialize(byte[] arrBytes)
         {
-            var ms = new MemoryStream();
+            var ms = new MemoryStream(8192);
             var bf = new BinaryFormatter();
 
             ms.Write(arrBytes, 0, arrBytes.Length);
             ms.Seek(0, SeekOrigin.Begin);
 
-            return (object)bf.Deserialize(ms);
+            return (object) bf.Deserialize(ms);
         }
+
+
 
     }
 }

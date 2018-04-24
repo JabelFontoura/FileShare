@@ -13,7 +13,6 @@ namespace FileShare.Common.SerializableActions
 
         public override void Run()
         {
-            var teste = ContentHasChanged();
             if (FileChanges.Length > 0 && ContentHasChanged())
             {
                 try
@@ -35,6 +34,10 @@ namespace FileShare.Common.SerializableActions
                 var data = File.ReadAllBytes(FileName);
 
                 return !data.SequenceEqual(FileChanges);
+            }
+            catch(FileNotFoundException e)
+            {
+                return true;
             }
             catch (IOException e)
             {

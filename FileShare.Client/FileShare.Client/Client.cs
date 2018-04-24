@@ -1,4 +1,5 @@
 ﻿using FileShare.Common;
+using FileShare.Common.SerializableActions;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -24,11 +25,16 @@ namespace FileShare.Client
             Sender = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             Sender.Connect(remoteEP);
 
+            StartListeningServer();
+        }
+
+        private void StartListeningServer()
+        {
             new Thread(() =>
             {
                 while (true)
                 {
-                    var bytes = new byte[1024];
+                    var bytes = new byte[8192];
                     try
                     {
                         Sender.Receive(bytes);
@@ -56,20 +62,10 @@ namespace FileShare.Client
                 Sender.Send(FileHelper.Serialize(action));
 
             }
-            catch (ArgumentNullException ane)
-            {
-                Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
-            }
             catch (SocketException se)
             {
                 Console.WriteLine("SocketException : {0}", se.ToString());
             }
-            catch (Exception e)
-            {
-                Console.WriteLine("Unexpected exception : {0}", e.ToString());
-            }
-
-
         }
     }
 }

@@ -41,6 +41,10 @@ namespace FileShare.Server
                     var handler = listener.Accept();
                     if (!Connections.Any(socket => socket.Equals(handler)))
                     {
+
+                        var syncFilesAction = new SyncFilesAction(Directory);
+                        var teste = FileHelper.Serialize(syncFilesAction);
+                        handler.Send(FileHelper.Serialize(syncFilesAction));
                         Connections.Add(handler);
 
                         new Thread(() =>
@@ -52,20 +56,10 @@ namespace FileShare.Server
                                 {
                                     var bytes = new Byte[1024];
                                     client.Receive(bytes);
-                                    Console.WriteLine("Received " + bytes.Length + "from " + handler.RemoteEndPoint.ToString());
 
-                                    var action = (FileAction)FileHelper.Deserialize(bytes);
+                                    var action = (FileAction) FileHelper.Deserialize(bytes);
 
-                                    var incommingFileName = action.FileName;
-                                    var incommingOldFileName = action.OldFileName;
-
-                                    action.FileName = Directory + action.FileName;
-                                    action.OldFileName = Directory + action.OldFileName;
-
-                                    action.Run();
-
-                                    action.FileName = incommingFileName;
-                                    action.OldFileName = incommingOldFileName;
+                                    ExecuteAction(action);
 
                                     SendActionToOthers(action, client);
                                 }
@@ -86,6 +80,20 @@ namespace FileShare.Server
             {
                 Console.WriteLine(e.ToString());
             }
+        }
+
+        private void ExecuteAction(FileAction action)
+        {
+            var incommingFileName = action.FileName;
+            var incommingOldFileName = action.OldFileName;
+
+            action.FileName = Directory + action.FileName;
+            action.OldFileName = Directory + action.OldFileName;
+
+            action.Run();
+
+            action.FileName = incommingFileName;
+            action.OldFileName = incommingOldFileName;
         }
 
         public void SendActionToOthers(FileAction action, Socket exception)
